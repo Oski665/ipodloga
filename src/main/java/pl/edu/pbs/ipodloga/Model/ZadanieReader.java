@@ -1,0 +1,30 @@
+package pl.edu.pbs.ipodloga.Model;
+
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+public class ZadanieReader {
+    private Firestore firestore;
+
+    public ZadanieReader(Firestore firestore) {
+        this.firestore = firestore;
+    }
+
+    public void wyswietlWszystkiZadania() {
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("zadanie").get().get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                Zadanie zadanie = document.toObject(Zadanie.class);
+                System.out.println("Kolejność: " + zadanie.getKolejnosc());
+                System.out.println("Nazwa: " + zadanie.getNazwa());
+                System.out.println("Opis: " + zadanie.getOpis());
+                System.out.println();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać projektów", e);
+        }
+    }
+}

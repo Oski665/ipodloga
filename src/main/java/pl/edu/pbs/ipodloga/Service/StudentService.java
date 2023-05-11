@@ -1,13 +1,14 @@
 package pl.edu.pbs.ipodloga.Service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Student;
-import pl.edu.pbs.ipodloga.Model.StudentReader;
+import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class StudentService {
+
     private final Firestore firestore;
     private final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
@@ -32,8 +34,13 @@ public class StudentService {
                 logger.info("Dodano studenta: {}", student.getNazwisko());
             }
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Nie udało się pobrać studentów", e);
+            throw new RuntimeException("Nie udało się pobrać studenta", e);
         }
         return studenty;
+    }
+    public String dodajStudenta(Student student) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("student").add(student);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
     }
 }

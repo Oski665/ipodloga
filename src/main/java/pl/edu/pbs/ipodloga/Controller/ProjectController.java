@@ -18,7 +18,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/projekty")
+    @GetMapping
     public List<Projekt> pobierzWszystkieProjekty() {
         return projectService.pobierzWszystkieProjekty();
     }

@@ -1,0 +1,38 @@
+package pl.edu.pbs.ipodloga.Controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.Zadanie;
+import pl.edu.pbs.ipodloga.Service.ProjectService;
+import pl.edu.pbs.ipodloga.Service.ZadanieService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/zadania")
+public class ZadanieController {
+
+    private final ZadanieService zadanieService;
+
+    public ZadanieController(ZadanieService zadanieService) {
+        this.zadanieService = zadanieService;
+    }
+
+    @GetMapping
+    public List<Zadanie> pobierzWszystkieZadania() {
+        return zadanieService.pobierzWszystkieZadania();
+    }
+    @PostMapping
+    public ResponseEntity<String> dodajZadanie(@RequestBody Zadanie zadanie) {
+        try {
+            System.out.println(zadanie.getNazwa());
+            String zadanieId = zadanieService.dodajZadanie(zadanie);
+            return new ResponseEntity<>(zadanieId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}

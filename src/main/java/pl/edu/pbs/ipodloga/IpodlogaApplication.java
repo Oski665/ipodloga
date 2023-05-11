@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import pl.edu.pbs.ipodloga.Model.ZadanieReader;
 
 
 @SpringBootApplication
@@ -38,8 +38,10 @@ public class IpodlogaApplication {
 		Firestore firestore = firestoreConfig.firestore();
 		FirestoreReader firestoreReader = new FirestoreReader(firestore);
 		StudentReader studentReader = new StudentReader(firestore);
+		ZadanieReader zadanieReader = new ZadanieReader(firestore);
 
 		firestoreReader.wyswietlWszystkieProjekty();
 		studentReader.wyswietlWszystkichStudentow();
+		zadanieReader.wyswietlWszystkiZadania();
 	}
 }
