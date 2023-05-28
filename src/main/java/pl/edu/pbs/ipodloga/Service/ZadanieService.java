@@ -7,6 +7,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
@@ -38,6 +39,7 @@ public class ZadanieService {
         }
         return zadania;
     }
+
     public String dodajZadanie(Zadanie zadanie) throws ExecutionException, InterruptedException {
         ApiFuture<DocumentReference> future = firestore.collection("zadanie").add(zadanie);
         DocumentReference documentReference = future.get();

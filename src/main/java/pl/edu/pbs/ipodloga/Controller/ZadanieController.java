@@ -3,9 +3,7 @@ package pl.edu.pbs.ipodloga.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
-import pl.edu.pbs.ipodloga.Service.ProjectService;
 import pl.edu.pbs.ipodloga.Service.ZadanieService;
 
 import java.util.List;
@@ -24,9 +22,10 @@ public class ZadanieController {
     public List<Zadanie> pobierzWszystkieZadania() {
         return zadanieService.pobierzWszystkieZadania();
     }
-    @PostMapping
-    public ResponseEntity<String> dodajZadanie(@RequestBody Zadanie zadanie) {
+    @PostMapping("/{projektId}")
+    public ResponseEntity<String> dodajZadanie(@PathVariable String projektId, @RequestBody Zadanie zadanie) {
         try {
+            zadanie.setProjektId(projektId);
             System.out.println(zadanie.getNazwa());
             String zadanieId = zadanieService.dodajZadanie(zadanie);
             return new ResponseEntity<>(zadanieId, HttpStatus.CREATED);

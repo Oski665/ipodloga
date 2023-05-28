@@ -2,7 +2,6 @@ package pl.edu.pbs.ipodloga.Model;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import pl.edu.pbs.ipodloga.Model.Projekt;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

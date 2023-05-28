@@ -1,10 +1,6 @@
 package pl.edu.pbs.ipodloga.Model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 public class Projekt {
     @DocumentId

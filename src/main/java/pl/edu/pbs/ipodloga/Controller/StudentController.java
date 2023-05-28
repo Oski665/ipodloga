@@ -3,9 +3,7 @@ package pl.edu.pbs.ipodloga.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Student;
-import pl.edu.pbs.ipodloga.Service.ProjectService;
 import pl.edu.pbs.ipodloga.Service.StudentService;
 
 import java.util.List;

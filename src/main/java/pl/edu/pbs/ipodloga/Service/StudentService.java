@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.ipodloga.Model.Student;
-import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -43,4 +43,13 @@ public class Zadanie {
     private String nazwa;
     private String opis;
 
+    private String projektId;
+
+    public String getProjektId() {
+        return projektId;
+    }
+
+    public void setProjektId(String projektId) {
+        this.projektId = projektId;
+    }
 }
