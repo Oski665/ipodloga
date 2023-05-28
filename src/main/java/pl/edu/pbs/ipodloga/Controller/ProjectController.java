@@ -22,6 +22,20 @@ public class ProjectController {
     public List<Projekt> pobierzWszystkieProjekty() {
         return projectService.pobierzWszystkieProjekty();
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Projekt> pobierzProjekt(@PathVariable("id") String id) {
+        try {
+            Projekt projekt = projectService.pobierzProjekt(id);
+            if (projekt != null) {
+                return new ResponseEntity<>(projekt, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @PostMapping
     public ResponseEntity<String> dodajProjekt(@RequestBody Projekt projekt) {
         try {
