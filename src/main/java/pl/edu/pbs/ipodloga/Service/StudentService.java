@@ -2,6 +2,7 @@ package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.slf4j.Logger;
@@ -37,9 +38,29 @@ public class StudentService {
         }
         return studenty;
     }
+
     public String dodajStudenta(Student student) throws ExecutionException, InterruptedException {
         ApiFuture<DocumentReference> future = firestore.collection("student").add(student);
         DocumentReference documentReference = future.get();
         return documentReference.getId();
     }
+
+    public void przypiszProjekt(String studentId, String projektId) throws ExecutionException, InterruptedException {
+        DocumentReference documentReference = firestore.collection("student").document(studentId);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document = future.get();
+        if (document.exists()) {
+            Student student = document.toObject(Student.class);
+            if (student.getProjektyId().contains(projektId)) {
+                logger.info("Student: {} już jest przypisany do projektu: {}", studentId, projektId);
+            } else {
+                student.getProjektyId().add(projektId);
+                firestore.collection("student").document(studentId).set(student);
+                logger.info("Projekt: {} został przypisany do studenta: {}", projektId, studentId);
+            }
+        } else {
+            throw new RuntimeException("Student o podanym id nie istnieje");
+        }
+    }
 }
+

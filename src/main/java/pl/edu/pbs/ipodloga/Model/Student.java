@@ -2,6 +2,9 @@ package pl.edu.pbs.ipodloga.Model;
 
 import com.google.cloud.firestore.annotation.DocumentId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Student {
     public String getId() {
         return id;
@@ -45,6 +48,13 @@ public class Student {
     public void setNazwisko(String nazwisko) {
         this.nazwisko = nazwisko;
     }
+    public List<String> getProjektyId() {
+        return projektyId;
+    }
+
+    public void setProjektyId(List<String> projektyId) {
+        this.projektyId = projektyId;
+    }
     @DocumentId
     private String id;
     private String email;
@@ -53,5 +63,8 @@ public class Student {
     private String nr_indeksu;
     private boolean stacjonarny;
     private Long student_id;
-    public Student(){}
+    private List<String> projektyId;
+    public Student(){
+        this.projektyId = new ArrayList<>();
+    }
 }
