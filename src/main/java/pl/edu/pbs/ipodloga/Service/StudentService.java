@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.ipodloga.Model.Student;
+import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,37 @@ public class StudentService {
                 student.getProjektyId().add(projektId);
                 firestore.collection("student").document(studentId).set(student);
                 logger.info("Projekt: {} został przypisany do studenta: {}", projektId, studentId);
+            }
+        } else {
+            throw new RuntimeException("Student o podanym id nie istnieje");
+        }
+    }
+
+    public void przypiszZadanie(String studentId, String zadanieId) throws ExecutionException, InterruptedException {
+        DocumentReference documentReference = firestore.collection("student").document(studentId);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document = future.get();
+        if (document.exists()) {
+            Student student = document.toObject(Student.class);
+
+            DocumentReference zadanieReference = firestore.collection("zadanie").document(zadanieId);
+            ApiFuture<DocumentSnapshot> zadanieFuture = zadanieReference.get();
+            DocumentSnapshot zadanieDocument = zadanieFuture.get();
+            if (zadanieDocument.exists()) {
+                Zadanie zadanie = zadanieDocument.toObject(Zadanie.class);
+                if (student.getProjektyId().contains(zadanie.getProjektId())) {
+                    if (!student.getZadaniaId().contains(zadanieId)) {
+                        student.getZadaniaId().add(zadanieId);
+                        firestore.collection("student").document(studentId).set(student);
+                        logger.info("Zadanie: {} zostało przypisane do studenta: {}", zadanieId, studentId);
+                    } else {
+                        logger.info("Zadanie: {} jest już przypisane do studenta: {}", zadanieId, studentId);
+                    }
+                } else {
+                    throw new RuntimeException("Student nie jest przypisany do projektu, do którego należy zadanie");
+                }
+            } else {
+                throw new RuntimeException("Zadanie o podanym id nie istnieje");
             }
         } else {
             throw new RuntimeException("Student o podanym id nie istnieje");

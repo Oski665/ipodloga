@@ -48,5 +48,17 @@ public class StudentController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/{studentId}/zadania/{zadanieId}")
+    public ResponseEntity<String> przypiszZadanie(@PathVariable String studentId, @PathVariable String zadanieId) {
+        try {
+            studentService.przypiszZadanie(studentId, zadanieId);
+            return new ResponseEntity<>("Zadanie zostało przypisane do studenta", HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
 

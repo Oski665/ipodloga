@@ -55,6 +55,13 @@ public class Student {
     public void setProjektyId(List<String> projektyId) {
         this.projektyId = projektyId;
     }
+    public List<String> getZadaniaId() {
+        return zadaniaId;
+    }
+
+    public void setZadaniaId(List<String> zadaniaId) {
+        this.zadaniaId = zadaniaId;
+    }
     @DocumentId
     private String id;
     private String email;
@@ -64,7 +71,9 @@ public class Student {
     private boolean stacjonarny;
     private Long student_id;
     private List<String> projektyId;
+    private List<String> zadaniaId;
     public Student(){
         this.projektyId = new ArrayList<>();
+        this.zadaniaId = new ArrayList<>();
     }
 }
