@@ -26,6 +26,7 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:8.0.1'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.imixs.workflow:org.imixs.workflow.manik.project:0.0.4'
+	testImplementation 'junit:junit:4.13.1'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'

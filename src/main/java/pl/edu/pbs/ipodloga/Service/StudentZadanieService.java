@@ -7,8 +7,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.StudentZadanie;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
@@ -16,19 +15,25 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class ZadanieService {
+public class StudentZadanieService {
 
     private final Firestore firestore;
-    private final Logger logger = LoggerFactory.getLogger(ProjectService.class);
+    private final Logger logger = LoggerFactory.getLogger(StudentZadanieService.class);
 
-    public ZadanieService(Firestore firestore) {
+    public StudentZadanieService(Firestore firestore) {
         this.firestore = firestore;
     }
 
-    public List<Zadanie> pobierzWszystkieZadania() {
+    public String przypiszZadanieDoStudenta(StudentZadanie studentZadanie) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("studentZadanie").add(studentZadanie);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
+    }
+
+    public List<Zadanie> pobierzZadaniaStudenta(String studentId) {
         List<Zadanie> zadania = new ArrayList<>();
         try {
-            List<QueryDocumentSnapshot> documents = firestore.collection("zadanie").get().get().getDocuments();
+            List<QueryDocumentSnapshot> documents = firestore.collection("studentZadanie").whereEqualTo("studentId", studentId).get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
                 Zadanie zadanie = document.toObject(Zadanie.class);
                 zadania.add(zadanie);
@@ -38,11 +43,5 @@ public class ZadanieService {
             throw new RuntimeException("Nie udało się pobrać zadań", e);
         }
         return zadania;
-    }
-
-    public String dodajZadanie(Zadanie zadanie) throws ExecutionException, InterruptedException {
-        ApiFuture<DocumentReference> future = firestore.collection("zadanie").add(zadanie);
-        DocumentReference documentReference = future.get();
-        return documentReference.getId();
     }
 }
