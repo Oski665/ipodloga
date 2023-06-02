@@ -15,6 +15,8 @@ public class Zadanie {
     @DocumentId
     private String id;
 
+
+
     public String getKolejnosc() {
         return kolejnosc;
     }
@@ -39,9 +41,53 @@ public class Zadanie {
         this.opis = opis;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     private String kolejnosc;
     private String nazwa;
     private String opis;
+
+    public enum Type {
+        TASK,
+        ERROR
+    }
+
+    public enum Priority {
+        HIGH,
+        LOW
+    }
+
+    public enum Status {
+        DONE,
+        ON_GOING,
+        NOT_ASSIGNED
+    }
+
+    private Type type;
+    private Priority priority;
+    private Status status;
 
     private String projektId;
 

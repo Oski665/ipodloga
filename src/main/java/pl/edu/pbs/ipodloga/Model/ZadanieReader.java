@@ -21,6 +21,9 @@ public class ZadanieReader {
                 System.out.println("Kolejność: " + zadanie.getKolejnosc());
                 System.out.println("Nazwa: " + zadanie.getNazwa());
                 System.out.println("Opis: " + zadanie.getOpis());
+                System.out.println("Typ: " + zadanie.getType());
+                System.out.println("Priorytet: " + zadanie.getPriority());
+                System.out.println("Status: " + zadanie.getStatus());
                 System.out.println();
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -28,3 +31,4 @@ public class ZadanieReader {
         }
     }
 }
+
