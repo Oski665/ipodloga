@@ -40,6 +40,7 @@ public class ProjectService {
         }
         return projekty;
     }
+
     public Projekt pobierzProjekt(String id) {
         try {
             DocumentReference documentReference = firestore.collection("projekt").document(id);

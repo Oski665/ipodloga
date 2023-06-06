@@ -36,6 +36,8 @@ public class ProjectController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
     @PostMapping
     public ResponseEntity<String> dodajProjekt(@RequestBody Projekt projekt) {
         try {

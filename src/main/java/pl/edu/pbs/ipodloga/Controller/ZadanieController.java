@@ -3,6 +3,7 @@ package pl.edu.pbs.ipodloga.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 import pl.edu.pbs.ipodloga.Service.ZadanieService;
 
@@ -33,5 +34,10 @@ public class ZadanieController {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/projekty/{id}")
+    public List<Zadanie> pobierzTaskiProjektu(@PathVariable("id") String id)  {
+        return zadanieService.pobierzTaskiProjektu(id);
     }
 }

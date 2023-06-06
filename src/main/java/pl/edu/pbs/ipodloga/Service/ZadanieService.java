@@ -40,6 +40,21 @@ public class ZadanieService {
         return zadania;
     }
 
+    public List<Zadanie> pobierzTaskiProjektu(String id) {
+        List<Zadanie> taski = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("zadanie").whereEqualTo("projektId", id).get().get().getDocuments();;
+            for (QueryDocumentSnapshot document : documents) {
+                Zadanie zadanie = document.toObject(Zadanie.class);
+                taski.add(zadanie);
+                logger.info("Dodano task: {}", zadanie.getNazwa());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać projektów", e);
+        }
+        return taski;
+    }
+
     public String dodajZadanie(Zadanie zadanie) throws ExecutionException, InterruptedException {
         ApiFuture<DocumentReference> future = firestore.collection("zadanie").add(zadanie);
         DocumentReference documentReference = future.get();
