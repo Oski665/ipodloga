@@ -8,8 +8,9 @@ public class Projekt {
     //private LocalDateTime dataczas_utworzenia;
     private String nazwa;
     private String opis;
-    private Long projekt_id;
     private Boolean status;
+    private String dataczas_utworzenia;
+    private String dataczas_ukonczenia;
 
     public String getDataczas_utworzenia() {
         return dataczas_utworzenia;
@@ -19,7 +20,13 @@ public class Projekt {
         this.dataczas_utworzenia = dataczas_utworzenia;
     }
 
-    private String dataczas_utworzenia;
+    public String getDataczas_ukonczenia() {
+        return dataczas_ukonczenia;
+    }
+
+    public void setDataczas_ukonczenia(String dataczas_ukonczenia) {
+        this.dataczas_ukonczenia = dataczas_ukonczenia;
+    }
 
     // Konstruktor bezargumentowy
     public Projekt() {
@@ -56,14 +63,6 @@ public class Projekt {
 
     public void setOpis(String opis) {
         this.opis = opis;
-    }
-
-    public Long getProjekt_id() {
-        return projekt_id;
-    }
-
-    public void setProjekt_id(Long projekt_id) {
-        this.projekt_id = projekt_id;
     }
 
     public Boolean getStatus() {

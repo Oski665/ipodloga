@@ -23,7 +23,6 @@ public class FirestoreReader {
                 System.out.println("Data utworzenia: " + projekt.getDataczas_utworzenia());
                 System.out.println("Nazwa: " + projekt.getNazwa());
                 System.out.println("Opis: " + projekt.getOpis());
-                System.out.println("Projekt ID: " + projekt.getProjekt_id());
                 System.out.println("Status: " + projekt.getStatus());
                 System.out.println();
             }
