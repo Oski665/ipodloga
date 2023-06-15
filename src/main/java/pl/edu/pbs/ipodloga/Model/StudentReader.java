@@ -18,6 +18,7 @@ public class StudentReader {
             List<QueryDocumentSnapshot> documents = firestore.collection("student").get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
                 Student student = document.toObject(Student.class);
+                System.out.println("Id: " + student.getId());
                 System.out.println("Email: " + student.getEmail());
                 System.out.println("Imie: " + student.getImie());
                 System.out.println("Nazwisko: " + student.getNazwisko());

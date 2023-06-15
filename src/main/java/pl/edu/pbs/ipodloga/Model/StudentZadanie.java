@@ -35,4 +35,3 @@ public class StudentZadanie {
         this.zadanieId = zadanieId;
     }
 }
-

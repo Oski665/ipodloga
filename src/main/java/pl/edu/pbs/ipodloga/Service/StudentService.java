@@ -25,6 +25,23 @@ public class StudentService {
         this.firestore = firestore;
     }
 
+    public Student getStudentById(String studentId) {
+        try {
+            DocumentReference docRef = firestore.collection("student").document(studentId);
+            ApiFuture<DocumentSnapshot> future = docRef.get();
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+                // Konwertuj dokument na obiekt Student
+                return document.toObject(Student.class);
+            } else {
+                logger.error("Nie znaleziono studenta o id: {}", studentId);
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać studenta", e);
+        }
+    }
+
     public List<Student> pobierzWszystkichStudentow() {
         List<Student> studenty = new ArrayList<>();
         try {
@@ -44,54 +61,5 @@ public class StudentService {
         ApiFuture<DocumentReference> future = firestore.collection("student").add(student);
         DocumentReference documentReference = future.get();
         return documentReference.getId();
-    }
-
-    public void przypiszProjekt(String studentId, String projektId) throws ExecutionException, InterruptedException {
-        DocumentReference documentReference = firestore.collection("student").document(studentId);
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
-        DocumentSnapshot document = future.get();
-        if (document.exists()) {
-            Student student = document.toObject(Student.class);
-            if (student.getProjektyId().contains(projektId)) {
-                logger.info("Student: {} już jest przypisany do projektu: {}", studentId, projektId);
-            } else {
-                student.getProjektyId().add(projektId);
-                firestore.collection("student").document(studentId).set(student);
-                logger.info("Projekt: {} został przypisany do studenta: {}", projektId, studentId);
-            }
-        } else {
-            throw new RuntimeException("Student o podanym id nie istnieje");
-        }
-    }
-
-    public void przypiszZadanie(String studentId, String zadanieId) throws ExecutionException, InterruptedException {
-        DocumentReference documentReference = firestore.collection("student").document(studentId);
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
-        DocumentSnapshot document = future.get();
-        if (document.exists()) {
-            Student student = document.toObject(Student.class);
-
-            DocumentReference zadanieReference = firestore.collection("zadanie").document(zadanieId);
-            ApiFuture<DocumentSnapshot> zadanieFuture = zadanieReference.get();
-            DocumentSnapshot zadanieDocument = zadanieFuture.get();
-            if (zadanieDocument.exists()) {
-                Zadanie zadanie = zadanieDocument.toObject(Zadanie.class);
-                if (student.getProjektyId().contains(zadanie.getProjektId())) {
-                    if (!student.getZadaniaId().contains(zadanieId)) {
-                        student.getZadaniaId().add(zadanieId);
-                        firestore.collection("student").document(studentId).set(student);
-                        logger.info("Zadanie: {} zostało przypisane do studenta: {}", zadanieId, studentId);
-                    } else {
-                        logger.info("Zadanie: {} jest już przypisane do studenta: {}", zadanieId, studentId);
-                    }
-                } else {
-                    throw new RuntimeException("Student nie jest przypisany do projektu, do którego należy zadanie");
-                }
-            } else {
-                throw new RuntimeException("Zadanie o podanym id nie istnieje");
-            }
-        } else {
-            throw new RuntimeException("Student o podanym id nie istnieje");
-        }
     }
 }

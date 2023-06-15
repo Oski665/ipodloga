@@ -91,6 +91,15 @@ public class Zadanie {
 
     private String projektId;
 
+    private String deadline;
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
     public String getProjektId() {
         return projektId;
     }

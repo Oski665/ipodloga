@@ -18,12 +18,14 @@ public class ZadanieReader {
             List<QueryDocumentSnapshot> documents = firestore.collection("zadanie").get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
                 Zadanie zadanie = document.toObject(Zadanie.class);
+                System.out.println("Id: " + zadanie.getId());
                 System.out.println("Kolejność: " + zadanie.getKolejnosc());
                 System.out.println("Nazwa: " + zadanie.getNazwa());
                 System.out.println("Opis: " + zadanie.getOpis());
                 System.out.println("Typ: " + zadanie.getType());
                 System.out.println("Priorytet: " + zadanie.getPriority());
                 System.out.println("Status: " + zadanie.getStatus());
+                System.out.println("Deadline: " + zadanie.getDeadline());
                 System.out.println();
             }
         } catch (InterruptedException | ExecutionException e) {

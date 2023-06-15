@@ -49,8 +49,14 @@ public class StudentController {
     @PostMapping("/{studentId}/projekty/{projektId}")
     public ResponseEntity<String> przypiszProjekt(@PathVariable String studentId, @PathVariable String projektId) {
         try {
+            // Pobierz studenta na podstawie przekazanego studentId
+            Student student = studentService.getStudentById(studentId);
+            if (student == null) {
+                return new ResponseEntity<>("Nie znaleziono studenta", HttpStatus.NOT_FOUND);
+            }
+
             StudentProjekt studentProjekt = new StudentProjekt();
-            studentProjekt.setStudentId(studentId);
+            studentProjekt.setStudentId(student.getId());  // Użyj pobranego id studenta
             studentProjekt.setProjektId(projektId);
             studentProjektService.przypiszProjektDoStudenta(studentProjekt);
             return new ResponseEntity<>("Projekt został przypisany do studenta", HttpStatus.OK);
@@ -61,11 +67,18 @@ public class StudentController {
         }
     }
 
+
     @PostMapping("/{studentId}/zadania/{zadanieId}")
     public ResponseEntity<String> przypiszZadanie(@PathVariable String studentId, @PathVariable String zadanieId) {
         try {
+            // Pobierz studenta na podstawie przekazanego studentId
+            Student student = studentService.getStudentById(studentId);
+            if (student == null) {
+                return new ResponseEntity<>("Nie znaleziono studenta", HttpStatus.NOT_FOUND);
+            }
+
             StudentZadanie studentZadanie = new StudentZadanie();
-            studentZadanie.setStudentId(studentId);
+            studentZadanie.setStudentId(student.getId());
             studentZadanie.setZadanieId(zadanieId);
             studentZadanieService.przypiszZadanieDoStudenta(studentZadanie);
             return new ResponseEntity<>("Zadanie zostało przypisane do studenta", HttpStatus.OK);
