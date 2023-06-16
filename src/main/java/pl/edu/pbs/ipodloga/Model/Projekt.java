@@ -8,7 +8,7 @@ public class Projekt {
     //private LocalDateTime dataczas_utworzenia;
     private String nazwa;
     private String opis;
-    private Boolean status;
+    private String status;
     private String dataczas_utworzenia;
     private String dataczas_ukonczenia;
 
@@ -65,11 +65,11 @@ public class Projekt {
         this.opis = opis;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
