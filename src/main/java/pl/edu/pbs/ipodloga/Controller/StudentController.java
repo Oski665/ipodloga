@@ -88,5 +88,16 @@ public class StudentController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-}
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> aktualizujStudenta(@PathVariable String id, @RequestBody Student updatedStudent) {
+        try {
+            Student student = studentService.aktualizujStudenta(id, updatedStudent);
+            return new ResponseEntity<>(student, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

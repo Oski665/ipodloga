@@ -19,8 +19,11 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Projekt> pobierzWszystkieProjekty() {
-        return projectService.pobierzWszystkieProjekty();
+    public ResponseEntity<List<Projekt>> pobierzWszystkieProjekty(
+            @RequestParam(defaultValue = "1") int strona,
+            @RequestParam(defaultValue = "10") int iloscNaStrone) {
+        List<Projekt> projekty = projectService.pobierzWszystkieProjekty(strona, iloscNaStrone);
+        return new ResponseEntity<>(projekty, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Projekt> pobierzProjekt(@PathVariable("id") String id) {
@@ -37,13 +40,23 @@ public class ProjectController {
         }
     }
 
-
     @PostMapping
     public ResponseEntity<String> dodajProjekt(@RequestBody Projekt projekt) {
         try {
             System.out.println(projekt.getNazwa());
             String projectId = projectService.dodajProjekt(projekt);
             return new ResponseEntity<>(projectId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/projekt/{id}")
+    public ResponseEntity<Projekt> aktualizujProjekt(@PathVariable("id") String id, @RequestBody Projekt projekt) {
+        try {
+            Projekt aktualizowanyProjekt = projectService.aktualizujProjekt(id, projekt);
+            return new ResponseEntity<>(aktualizowanyProjekt, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

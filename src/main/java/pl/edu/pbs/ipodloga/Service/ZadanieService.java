@@ -4,15 +4,15 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.WriteResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -59,5 +59,30 @@ public class ZadanieService {
         ApiFuture<DocumentReference> future = firestore.collection("zadanie").add(zadanie);
         DocumentReference documentReference = future.get();
         return documentReference.getId();
+    }
+
+    public Zadanie aktualizujZadanie(String id, Zadanie updatedZadanie) throws ExecutionException, InterruptedException {
+        DocumentReference documentReference = firestore.collection("zadanie").document(id);
+        Zadanie existingZadanie = documentReference.get().get().toObject(Zadanie.class);
+
+        if (existingZadanie != null) {
+            // tutaj aktualizujesz pola istniejącego zadania na podstawie updatedZadanie
+            existingZadanie.setKolejnosc(updatedZadanie.getKolejnosc());
+            existingZadanie.setNazwa(updatedZadanie.getNazwa());
+            existingZadanie.setOpis(updatedZadanie.getOpis());
+            existingZadanie.setType(updatedZadanie.getType());
+            existingZadanie.setPriority(updatedZadanie.getPriority());
+            existingZadanie.setStatus(updatedZadanie.getStatus());
+            existingZadanie.setProjektId(updatedZadanie.getProjektId());
+            existingZadanie.setDeadline(updatedZadanie.getDeadline());
+            // aktualizacja dokumentu w bazie danych
+            ApiFuture<WriteResult> writeResult = documentReference.set(existingZadanie);
+            logger.info("Zaktualizowano zadanie o ID: {} o czasie: {}", id, writeResult.get().getUpdateTime());
+
+        } else {
+            throw new NoSuchElementException("Zadanie o ID: " + id + " nie istnieje");
+        }
+
+        return existingZadanie;
     }
 }

@@ -1,10 +1,15 @@
 package pl.edu.pbs.ipodloga.Model;
 
 import com.google.cloud.firestore.annotation.DocumentId;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
 public class Student {
     public String getId() {
         return id;

@@ -1,10 +1,7 @@
 package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,5 +58,28 @@ public class StudentService {
         ApiFuture<DocumentReference> future = firestore.collection("student").add(student);
         DocumentReference documentReference = future.get();
         return documentReference.getId();
+    }
+
+    public Student aktualizujStudenta(String id, Student updatedStudent) throws ExecutionException, InterruptedException {
+        DocumentReference documentReference = firestore.collection("student").document(id);
+        Student existingStudent = documentReference.get().get().toObject(Student.class);
+
+        if (existingStudent != null) {
+            existingStudent.setEmail(updatedStudent.getEmail());
+            existingStudent.setImie(updatedStudent.getImie());
+            existingStudent.setNazwisko(updatedStudent.getNazwisko());
+            existingStudent.setNr_indeksu(updatedStudent.getNr_indeksu());
+            existingStudent.setStacjonarny(updatedStudent.getStacjonarny());
+            existingStudent.setStudent_id(updatedStudent.getStudent_id());
+            existingStudent.setProjektyId(updatedStudent.getProjektyId());
+            existingStudent.setZadaniaId(updatedStudent.getZadaniaId());
+
+            ApiFuture<WriteResult> writeResult = documentReference.set(existingStudent);
+            logger.info("Zaktualizowano studenta o ID: {}", id);
+        } else {
+            throw new RuntimeException("Student o ID: " + id + " nie istnieje");
+        }
+
+        return existingStudent;
     }
 }
