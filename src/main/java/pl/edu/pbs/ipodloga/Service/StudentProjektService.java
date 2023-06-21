@@ -2,6 +2,7 @@ package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.slf4j.Logger;
@@ -35,14 +36,17 @@ public class StudentProjektService {
         try {
             List<QueryDocumentSnapshot> documents = firestore.collection("studentProjekt").whereEqualTo("studentId", studentId).get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
-                Projekt projekt = document.toObject(Projekt.class);
-                projekty.add(projekt);
-                logger.info("Dodano projekt: {}", projekt.getNazwa());
+                String projektId = document.getString("projektId");
+                DocumentSnapshot projektSnapshot = firestore.collection("projekt").document(projektId).get().get();
+                if (projektSnapshot.exists()) {
+                    Projekt projekt = projektSnapshot.toObject(Projekt.class);
+                    projekty.add(projekt);
+                    logger.info("Dodano projekt: {}", projekt.getNazwa());
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Nie udało się pobrać projektów", e);
         }
         return projekty;
     }
-
 }
