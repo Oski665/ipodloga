@@ -28,8 +28,22 @@ public class ZadanieController {
         return zadanieService.pobierzWszystkieZadania();
     }
 
+
+    //ZMIANA NA SZYBKO
+    @PostMapping
+    public ResponseEntity<String> dodajZadanie(@RequestBody Zadanie zadanie) {
+        try {
+            System.out.println(zadanie.getNazwa());
+            String zadanieId = zadanieService.dodajZadanie(zadanie);
+            return new ResponseEntity<>(zadanieId, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/{projektId}")
-    public ResponseEntity<String> dodajZadanie(@PathVariable String projektId, @RequestBody Zadanie zadanie) {
+    public ResponseEntity<String> dodajZadanie2(@PathVariable String projektId, @RequestBody Zadanie zadanie) {
         try {
             zadanie.setProjektId(projektId);
             System.out.println(zadanie.getNazwa());
