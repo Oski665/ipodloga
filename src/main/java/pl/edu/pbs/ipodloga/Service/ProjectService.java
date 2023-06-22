@@ -2,9 +2,10 @@ package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-//import com.google.cloud.firestore.DocumentReference;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.Konwersacja;
+import pl.edu.pbs.ipodloga.Model.Wiadomosc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class ProjectService {
         return projekty;
     }
 
-
     public Projekt pobierzProjekt(String id) {
         try {
             DocumentReference documentReference = firestore.collection("projekt").document(id);
@@ -79,6 +79,7 @@ public class ProjectService {
             existingProjekt.setStatus(updatedProjekt.getStatus());
             existingProjekt.setDataczas_utworzenia(updatedProjekt.getDataczas_utworzenia());
             existingProjekt.setDataczas_ukonczenia(updatedProjekt.getDataczas_ukonczenia());
+            existingProjekt.setKonwersacja(updatedProjekt.getKonwersacja());
 
             // aktualizacja dokumentu w bazie danych
             ApiFuture<WriteResult> writeResult = documentReference.set(existingProjekt);
@@ -90,4 +91,51 @@ public class ProjectService {
         return existingProjekt;
     }
 
+    public String dodajKonwersacje(Konwersacja konwersacja) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("konwersacja").add(konwersacja);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
+    }
+
+    public Konwersacja pobierzKonwersacje(String id) {
+        try {
+            DocumentReference documentReference = firestore.collection("konwersacja").document(id);
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+                Konwersacja konwersacja = document.toObject(Konwersacja.class);
+                logger.info("Pobrano konwersację o ID: {}", id);
+                return konwersacja;
+            } else {
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać konwersacji", e);
+        }
+    }
+
+    public String dodajWiadomosc(String konwersacjaId, Wiadomosc wiadomosc) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("konwersacja").document(konwersacjaId)
+                .collection("wiadomosci").add(wiadomosc);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
+    }
+
+    public List<Wiadomosc> pobierzWiadomosci(String konwersacjaId) {
+        List<Wiadomosc> wiadomosci = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("konwersacja").document(konwersacjaId)
+                    .collection("wiadomosci")
+                    .orderBy("date")
+                    .get().get().getDocuments();
+
+            for (QueryDocumentSnapshot document : documents) {
+                Wiadomosc wiadomosc = document.toObject(Wiadomosc.class);
+                wiadomosci.add(wiadomosc);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać wiadomości", e);
+        }
+        return wiadomosci;
+    }
 }
