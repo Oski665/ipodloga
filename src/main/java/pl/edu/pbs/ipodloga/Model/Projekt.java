@@ -12,6 +12,10 @@ public class Projekt {
     private String dataczas_ukonczenia;
     private String konwersacja;
 
+    // Konstruktor bezargumentowy
+    public Projekt() {
+    }
+        
     public String getDataczas_utworzenia() {
         return dataczas_utworzenia;
     }
