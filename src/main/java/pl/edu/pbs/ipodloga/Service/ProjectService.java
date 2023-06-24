@@ -90,9 +90,4 @@ public class ProjectService {
         return existingProjekt;
     }
 
-    public String usunProjekt(String id) throws InterruptedException, ExecutionException {
-        ApiFuture<WriteResult> writeResult = firestore.collection("projekt").document(id).delete();
-        return "Usunięto projekt o ID: " + id;
-    }
-
 }
