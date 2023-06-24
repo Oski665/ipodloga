@@ -1,12 +1,13 @@
 package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
+import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.StudentZadanie;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
@@ -32,18 +33,30 @@ public class StudentZadanieService {
         return documentReference.getId();
     }
 
-    public List<Zadanie> pobierzZadaniaStudenta(String studentId) {
-        List<Zadanie> zadania = new ArrayList<>();
+    public List<Pair<Student, Zadanie>> pobierzZadaniaStudenta(String studentId) {
+        List<Pair<Student, Zadanie>> studentZadania = new ArrayList<>();
         try {
             List<QueryDocumentSnapshot> documents = firestore.collection("studentZadanie").whereEqualTo("studentId", studentId).get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
-                Zadanie zadanie = document.toObject(Zadanie.class);
-                zadania.add(zadanie);
-                logger.info("Dodano zadanie: {}", zadanie.getNazwa());
+                String zadanieId = document.getString("zadanieId");
+                DocumentSnapshot zadanieSnapshot = firestore.collection("zadanie").document(zadanieId).get().get();
+                DocumentSnapshot studentSnapshot = firestore.collection("student").document(studentId).get().get();
+                if (zadanieSnapshot.exists() && studentSnapshot.exists()) {
+                    Zadanie zadanie = zadanieSnapshot.toObject(Zadanie.class);
+                    Student student = studentSnapshot.toObject(Student.class);
+                    studentZadania.add(Pair.of(student, zadanie));
+                    logger.info("Dodano zadanie: {} dla studenta: {}", zadanie.getNazwa(), student.getImie());
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Nie udało się pobrać zadań", e);
         }
-        return zadania;
+        return studentZadania;
     }
+
+    public String usunStudentZadanie(String id) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = firestore.collection("studentZadanie").document(id).delete();
+        return "Usunięto studenta zadanie o ID: " + id;
+    }
+
 }

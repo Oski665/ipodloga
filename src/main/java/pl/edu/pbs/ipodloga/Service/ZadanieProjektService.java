@@ -1,9 +1,7 @@
 package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,13 +32,24 @@ public class ZadanieProjektService {
         try {
             List<QueryDocumentSnapshot> documents = firestore.collection("zadanieProjekt").whereEqualTo("projektId", projektId).get().get().getDocuments();
             for (QueryDocumentSnapshot document : documents) {
-                Zadanie zadanie = document.toObject(Zadanie.class);
-                zadania.add(zadanie);
-                logger.info("Dodano zadanie do projektu: {}", zadanie.getNazwa());
+                String zadanieId = document.getString("zadanieId");
+                DocumentSnapshot zadanieSnapshot = firestore.collection("zadanie").document(zadanieId).get().get();
+                if (zadanieSnapshot.exists()) {
+                    Zadanie zadanie = zadanieSnapshot.toObject(Zadanie.class);
+                    zadania.add(zadanie);
+                    logger.info("Dodano zadanie do projektu: {}", zadanie.getNazwa());
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Nie udało się pobrać zadań projektu", e);
         }
         return zadania;
     }
+
+    public String usunZadanieProjekt(String id) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = firestore.collection("zadanieProjekt").document(id).delete();
+        return "Usunięto zadanie projekt o ID: " + id;
+    }
+
 }
+

@@ -5,6 +5,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.StudentProjekt;
 import pl.edu.pbs.ipodloga.Model.StudentZadanie;
+import pl.edu.pbs.ipodloga.Model.Zadanie;
 import pl.edu.pbs.ipodloga.Service.StudentProjektService;
 import pl.edu.pbs.ipodloga.Service.StudentService;
 import pl.edu.pbs.ipodloga.Service.StudentZadanieService;
@@ -28,6 +30,7 @@ public class StudentController {
     private final StudentProjektService studentProjektService;
     private final StudentZadanieService studentZadanieService;
     private final Firestore firestore;
+
 
     @Autowired
     public StudentController(Firestore firestore, StudentService studentService, StudentProjektService studentProjektService, StudentZadanieService studentZadanieService) {
@@ -51,6 +54,11 @@ public class StudentController {
         } catch (InterruptedException | ExecutionException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/{studentId}/zadania")
+    public List<Pair<Student, Zadanie>> pobierzZadaniaStudenta(@PathVariable String studentId) {
+        return studentZadanieService.pobierzZadaniaStudenta(studentId);
     }
 
     @PostMapping("/{studentId}/projekty/{projektId}")
@@ -133,5 +141,35 @@ public class StudentController {
         }
 
         return students;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> usunStudenta(@PathVariable String id) {
+        try {
+            String message = studentService.usunStudenta(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/studentZadanie/{id}")
+    public ResponseEntity<String> usunStudentZadanie(@PathVariable String id) {
+        try {
+            String message = studentZadanieService.usunStudentZadanie(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/studentProjekt/{id}")
+    public ResponseEntity<String> usunStudentProjekt(@PathVariable String id) {
+        try {
+            String message = studentProjektService.usunStudentProjekt(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

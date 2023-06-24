@@ -82,4 +82,10 @@ public class StudentService {
 
         return existingStudent;
     }
+
+    public String usunStudenta(String id) throws InterruptedException, ExecutionException {
+        ApiFuture<WriteResult> writeResult = firestore.collection("student").document(id).delete();
+        return "Usunięto studenta o ID: " + id;
+    }
+
 }

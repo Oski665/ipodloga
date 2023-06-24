@@ -1,15 +1,18 @@
 package pl.edu.pbs.ipodloga.Controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 import pl.edu.pbs.ipodloga.Model.ZadanieProjekt;
+import pl.edu.pbs.ipodloga.Service.StudentZadanieService;
 import pl.edu.pbs.ipodloga.Service.ZadanieProjektService;
 import pl.edu.pbs.ipodloga.Service.ZadanieService;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/zadania")
@@ -17,6 +20,8 @@ public class ZadanieController {
 
     private final ZadanieService zadanieService;
     private final ZadanieProjektService zadanieProjektService;
+    @Autowired
+    private StudentZadanieService studentZadanieService;
 
     public ZadanieController(ZadanieService zadanieService, ZadanieProjektService zadanieProjektService) {
         this.zadanieService = zadanieService;
@@ -84,6 +89,36 @@ public class ZadanieController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> usunZadanie(@PathVariable String id) {
+        try {
+            String message = zadanieService.usunZadanie(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/studentZadanie/{id}")
+    public ResponseEntity<String> usunStudentZadanie(@PathVariable String id) {
+        try {
+            String message = studentZadanieService.usunStudentZadanie(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/zadanieProjekt/{id}")
+    public ResponseEntity<String> usunZadanieProjekt(@PathVariable String id) {
+        try {
+            String message = zadanieProjektService.usunZadanieProjekt(id);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

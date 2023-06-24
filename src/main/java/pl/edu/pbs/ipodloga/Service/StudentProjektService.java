@@ -1,10 +1,7 @@
 package pl.edu.pbs.ipodloga.Service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -49,4 +46,10 @@ public class StudentProjektService {
         }
         return projekty;
     }
+
+    public String usunStudentProjekt(String id) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = firestore.collection("studentProjekt").document(id).delete();
+        return "Usunięto studenta projekt o ID: " + id;
+    }
+
 }
