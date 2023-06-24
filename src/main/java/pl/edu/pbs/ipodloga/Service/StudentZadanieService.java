@@ -59,4 +59,22 @@ public class StudentZadanieService {
         return "Usunięto studenta zadanie o ID: " + id;
     }
 
+    public List<Student> pobierzStudentowDlaZadania(String zadanieId) {
+        List<Student> studenci = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("studentZadanie").whereEqualTo("zadanieId", zadanieId).get().get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                String studentId = document.getString("studentId");
+                DocumentSnapshot studentSnapshot = firestore.collection("student").document(studentId).get().get();
+                if (studentSnapshot.exists()) {
+                    Student student = studentSnapshot.toObject(Student.class);
+                    studenci.add(student);
+                    logger.info("Dodano studenta: {} do zadania: {}", student.getImie(), zadanieId);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać studentów dla zadania", e);
+        }
+        return studenci;
+    }
 }

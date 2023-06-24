@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.ProjektIZadaniamiIStudentami;
 import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 import pl.edu.pbs.ipodloga.Service.ProjectService;
@@ -112,4 +113,11 @@ public class ProjectController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/pzs/{projektId}")
+    public ResponseEntity<ProjektIZadaniamiIStudentami> pobierzProjektIZadaniamiIStudentami(@PathVariable String projektId) throws ExecutionException, InterruptedException {
+        ProjektIZadaniamiIStudentami projektIZadaniamiIStudentami = projectService.pobierzProjektIZadaniamiIStudentami(projektId);
+        return ResponseEntity.ok(projektIZadaniamiIStudentami);
+    }
+
 }

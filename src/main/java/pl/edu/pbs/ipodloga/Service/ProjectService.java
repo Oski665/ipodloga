@@ -3,27 +3,29 @@ package pl.edu.pbs.ipodloga.Service;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 //import com.google.cloud.firestore.DocumentReference;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
-import pl.edu.pbs.ipodloga.Model.Konwersacja;
-import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.pbs.ipodloga.Model.Wiadomosc;
 
 @Service
 public class ProjectService {
 
     private final Firestore firestore;
+    private final ZadanieProjektService zadanieProjektService;
+    private final StudentZadanieService studentZadanieService;
     private final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
-    public ProjectService(Firestore firestore) {
+    public ProjectService(Firestore firestore, ZadanieProjektService zadanieProjektService, StudentZadanieService studentZadanieService) {
         this.firestore = firestore;
+        this.zadanieProjektService = zadanieProjektService;
+        this.studentZadanieService = studentZadanieService;
     }
 
     public List<Projekt> pobierzWszystkieProjekty(int strona, int iloscNaStrone) {
@@ -143,5 +145,19 @@ public class ProjectService {
             throw new RuntimeException("Nie udało się pobrać wiadomości", e);
         }
         return wiadomosci;
+    }
+
+    public ProjektIZadaniamiIStudentami pobierzProjektIZadaniamiIStudentami(String projektId) throws ExecutionException, InterruptedException {
+        Projekt projekt = pobierzProjekt(projektId);
+        List<Zadanie> zadaniaProjektu = zadanieProjektService.pobierzZadaniaProjektu(projektId);
+
+        Map<String, List<Student>> zadanieStudentMap = new HashMap<>();
+        for (Zadanie zadanie : zadaniaProjektu) {
+            List<Student> studenciZadania = studentZadanieService.pobierzStudentowDlaZadania(zadanie.getId());
+            zadanieStudentMap.put(zadanie.getId(), studenciZadania);
+        }
+
+
+        return new ProjektIZadaniamiIStudentami(projekt, zadaniaProjektu, zadanieStudentMap);
     }
 }
