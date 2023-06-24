@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 //import com.google.cloud.firestore.DocumentReference;
 import org.springframework.stereotype.Service;
+import pl.edu.pbs.ipodloga.Model.Konwersacja;
 import pl.edu.pbs.ipodloga.Model.Projekt;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.pbs.ipodloga.Model.Wiadomosc;
 
 @Service
 public class ProjectService {
@@ -90,4 +92,56 @@ public class ProjectService {
         return existingProjekt;
     }
 
+    public String usunProjekt(String id) throws InterruptedException, ExecutionException {
+        ApiFuture<WriteResult> writeResult = firestore.collection("projekt").document(id).delete();
+        return "Usunięto projekt o ID: " + id;
+    }
+
+    public String dodajKonwersacje(Konwersacja konwersacja) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("konwersacja").add(konwersacja);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
+    }
+
+    public Konwersacja pobierzKonwersacje(String id) {
+        try {
+            DocumentReference documentReference = firestore.collection("konwersacja").document(id);
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+                Konwersacja konwersacja = document.toObject(Konwersacja.class);
+                logger.info("Pobrano konwersację o ID: {}", id);
+                return konwersacja;
+            } else {
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać konwersacji", e);
+        }
+    }
+
+    public String dodajWiadomosc(String konwersacjaId, Wiadomosc wiadomosc) throws ExecutionException, InterruptedException {
+        ApiFuture<DocumentReference> future = firestore.collection("konwersacja").document(konwersacjaId)
+                .collection("wiadomosci").add(wiadomosc);
+        DocumentReference documentReference = future.get();
+        return documentReference.getId();
+    }
+
+    public List<Wiadomosc> pobierzWiadomosci(String konwersacjaId) {
+        List<Wiadomosc> wiadomosci = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("konwersacja").document(konwersacjaId)
+                    .collection("wiadomosci")
+                    .orderBy("date")
+                    .get().get().getDocuments();
+
+            for (QueryDocumentSnapshot document : documents) {
+                Wiadomosc wiadomosc = document.toObject(Wiadomosc.class);
+                wiadomosci.add(wiadomosc);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać wiadomości", e);
+        }
+        return wiadomosci;
+    }
 }
