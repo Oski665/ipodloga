@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.ipodloga.Model.Projekt;
+import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 import pl.edu.pbs.ipodloga.Model.ZadanieProjekt;
+import pl.edu.pbs.ipodloga.Service.StudentService;
 import pl.edu.pbs.ipodloga.Service.StudentZadanieService;
 import pl.edu.pbs.ipodloga.Service.ZadanieProjektService;
 import pl.edu.pbs.ipodloga.Service.ZadanieService;
@@ -20,6 +22,8 @@ public class ZadanieController {
 
     private final ZadanieService zadanieService;
     private final ZadanieProjektService zadanieProjektService;
+    @Autowired
+    private StudentService studentService;
     @Autowired
     private StudentZadanieService studentZadanieService;
 
@@ -119,6 +123,27 @@ public class ZadanieController {
             return new ResponseEntity<>(message, HttpStatus.OK);
         } catch (InterruptedException | ExecutionException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/zadanie/{zadanieId}/przypisz-studenta/{studentId}")
+    public ResponseEntity<Zadanie> przypiszStudentaDoZadania(@PathVariable String zadanieId, @PathVariable String studentId) {
+        try {
+            Zadanie zadanie = zadanieService.getTaskById(zadanieId);
+            if (zadanie != null) {
+                Student student = studentService.getStudentById(studentId);
+                if (student != null) {
+                    student.getZadaniaId().add(zadanieId);
+                    studentService.aktualizujStudenta(studentId, student);
+                    return ResponseEntity.ok(zadanie);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

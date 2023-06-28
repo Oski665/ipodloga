@@ -110,4 +110,13 @@ public class ZadanieService {
         return "Usunięto zadanie o ID: " + id;
     }
 
+    public Zadanie getTaskById(String id) throws InterruptedException, ExecutionException {
+        DocumentSnapshot document = firestore.collection("zadanie").document(id).get().get();
+        if (document.exists()) {
+            return document.toObject(Zadanie.class);
+        } else {
+            throw new NoSuchElementException("Zadanie o ID: " + id + " nie istnieje");
+        }
+    }
+
 }
