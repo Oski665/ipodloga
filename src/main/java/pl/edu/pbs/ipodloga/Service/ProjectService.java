@@ -28,9 +28,14 @@ public class ProjectService {
         this.studentZadanieService = studentZadanieService;
     }
 
-    public List<Projekt> pobierzWszystkieProjekty(int strona, int iloscNaStrone) {
+    public PaginatedResponse<Projekt> pobierzWszystkieProjekty(int strona, int iloscNaStrone) {
         List<Projekt> projekty = new ArrayList<>();
+        int totalProjects;
+        int totalPage; // Deklaracja poza blokiem try
         try {
+            totalProjects = (int) firestore.collection("projekt").get().get().size(); // Pobieramy całkowitą liczbę projektów
+            totalPage = (int) Math.ceil((double) totalProjects / iloscNaStrone);  // Obliczamy całkowitą liczbę stron
+
             List<QueryDocumentSnapshot> documents = firestore.collection("projekt")
                     .orderBy("nazwa")  // sortuj projekty alfabetycznie po nazwie
                     .offset((strona - 1) * iloscNaStrone)
@@ -45,7 +50,8 @@ public class ProjectService {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Nie udało się pobrać projektów", e);
         }
-        return projekty;
+
+        return new PaginatedResponse<>(projekty, strona, totalPage); // Zwracamy wyniki jako PaginatedResponse
     }
 
 

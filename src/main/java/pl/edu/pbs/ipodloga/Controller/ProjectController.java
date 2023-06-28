@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pbs.ipodloga.Model.Projekt;
-import pl.edu.pbs.ipodloga.Model.ProjektIZadaniamiIStudentami;
-import pl.edu.pbs.ipodloga.Model.Student;
-import pl.edu.pbs.ipodloga.Model.Zadanie;
+import pl.edu.pbs.ipodloga.Model.*;
 import pl.edu.pbs.ipodloga.Service.ProjectService;
 import pl.edu.pbs.ipodloga.Service.StudentProjektService;
 import pl.edu.pbs.ipodloga.Service.ZadanieProjektService;
@@ -35,11 +32,11 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Projekt>> pobierzWszystkieProjekty(
+    public ResponseEntity<PaginatedResponse<Projekt>> pobierzWszystkieProjekty(
             @RequestParam(defaultValue = "1") int strona,
             @RequestParam(defaultValue = "10") int iloscNaStrone) {
-        List<Projekt> projekty = projectService.pobierzWszystkieProjekty(strona, iloscNaStrone);
-        return new ResponseEntity<>(projekty, HttpStatus.OK);
+        PaginatedResponse<Projekt> response = projectService.pobierzWszystkieProjekty(strona, iloscNaStrone);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Projekt> pobierzProjekt(@PathVariable("id") String id) {
