@@ -89,22 +89,23 @@ public class StudentService {
         return "Usunięto studenta o ID: " + id;
     }
 
-    public Student pobierzStudenta(String id) {
+    public Student pobierzStudentaPoStudentId(String studentId) {
         try {
-            DocumentReference documentReference = firestore.collection("student").document(id);
-            ApiFuture<DocumentSnapshot> future = documentReference.get();
-            DocumentSnapshot document = future.get();
-            if (document.exists()) {
+            CollectionReference students = firestore.collection("student");
+            Query query = students.whereEqualTo("student_id", studentId);
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+            if (!querySnapshot.get().getDocuments().isEmpty()) {
+                DocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
                 Student student = document.toObject(Student.class);
-                logger.info("Pobrano student_id: {}", student.getStudent_id());
+                logger.info("Pobrano studenta: {}", student.getStudent_id());
                 return student;
             } else {
                 return null;
             }
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Nie udało się pobrać student_id", e);
+            throw new RuntimeException("Nie udało się pobrać studenta", e);
         }
     }
-
 
 }

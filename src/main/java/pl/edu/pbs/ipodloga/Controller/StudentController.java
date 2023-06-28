@@ -54,21 +54,6 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Student> pobierzStudenta(@PathVariable("id") String id) {
-        try {
-            Student student = studentService.pobierzStudenta(id);
-            if (student != null) {
-                return new ResponseEntity<>(student, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @GetMapping("/{studentId}/zadania")
     public List<Pair<Student, Zadanie>> pobierzZadaniaStudenta(@PathVariable String studentId) {
         return studentZadanieService.pobierzZadaniaStudenta(studentId);
@@ -208,4 +193,20 @@ public class StudentController {
 
         return projects;
     }
+
+    @GetMapping("/{studentId}")
+    public ResponseEntity<Student> pobierzStudentId(@PathVariable("studentId") String studentId) {
+        try {
+            Student student = studentService.pobierzStudentaPoStudentId(studentId);
+            if (student != null) {
+                return new ResponseEntity<>(student, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
