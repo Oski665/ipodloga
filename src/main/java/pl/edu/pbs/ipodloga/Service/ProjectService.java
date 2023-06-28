@@ -83,6 +83,7 @@ public class ProjectService {
             existingProjekt.setStatus(updatedProjekt.getStatus());
             existingProjekt.setDataczas_utworzenia(updatedProjekt.getDataczas_utworzenia());
             existingProjekt.setDataczas_ukonczenia(updatedProjekt.getDataczas_ukonczenia());
+            existingProjekt.setKonwersacja(updatedProjekt.getKonwersacja());
 
             // aktualizacja dokumentu w bazie danych
             ApiFuture<WriteResult> writeResult = documentReference.set(existingProjekt);
