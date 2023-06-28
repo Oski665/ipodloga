@@ -4,7 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import pl.edu.pbs.ipodloga.Model.FirestoreReader;
-import pl.edu.pbs.ipodloga.Model.StudentReader;
+//import pl.edu.pbs.ipodloga.Model.StudentReader;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,12 +36,12 @@ public class IpodlogaApplication {
 		SpringApplication.run(IpodlogaApplication.class, args);
 		FirebaseConfig firestoreConfig = new FirebaseConfig();
 		Firestore firestore = firestoreConfig.firestore();
-		FirestoreReader firestoreReader = new FirestoreReader(firestore);
-		StudentReader studentReader = new StudentReader(firestore);
-		ZadanieReader zadanieReader = new ZadanieReader(firestore);
-
-		firestoreReader.wyswietlWszystkieProjekty();
-		studentReader.wyswietlWszystkichStudentow();
-		zadanieReader.wyswietlWszystkiZadania();
+//		FirestoreReader firestoreReader = new FirestoreReader(firestore);
+//		StudentReader studentReader = new StudentReader(firestore);
+//		ZadanieReader zadanieReader = new ZadanieReader(firestore);
+//
+//		firestoreReader.wyswietlWszystkieProjekty();
+//		studentReader.wyswietlWszystkichStudentow();
+//		zadanieReader.wyswietlWszystkiZadania();
 	}
 }
