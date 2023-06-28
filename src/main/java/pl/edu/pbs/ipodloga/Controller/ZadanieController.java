@@ -133,8 +133,8 @@ public class ZadanieController {
             if (zadanie != null) {
                 Student student = studentService.getStudentById(studentId);
                 if (student != null) {
-                    student.getZadaniaId().add(zadanieId);
-                    studentService.aktualizujStudenta(studentId, student);
+                    zadanie.setStudentId(studentId);
+                    zadanieService.aktualizujZadanie(zadanieId, zadanie);
                     return ResponseEntity.ok(zadanie);
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -146,4 +146,5 @@ public class ZadanieController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 }

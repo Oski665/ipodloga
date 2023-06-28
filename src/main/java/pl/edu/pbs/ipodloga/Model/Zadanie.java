@@ -92,6 +92,7 @@ public class Zadanie {
     private String projektId;
 
     private String deadline;
+    private String studentId;
 
     public String getDeadline() {
         return deadline;
@@ -106,5 +107,13 @@ public class Zadanie {
 
     public void setProjektId(String projektId) {
         this.projektId = projektId;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 }
