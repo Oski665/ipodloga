@@ -5,6 +5,7 @@ import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
@@ -87,5 +88,23 @@ public class StudentService {
         ApiFuture<WriteResult> writeResult = firestore.collection("student").document(id).delete();
         return "Usunięto studenta o ID: " + id;
     }
+
+    public Student pobierzStudenta(String id) {
+        try {
+            DocumentReference documentReference = firestore.collection("student").document(id);
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+                Student student = document.toObject(Student.class);
+                logger.info("Pobrano student_id: {}", student.getStudent_id());
+                return student;
+            } else {
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać student_id", e);
+        }
+    }
+
 
 }

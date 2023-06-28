@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pbs.ipodloga.Model.Student;
-import pl.edu.pbs.ipodloga.Model.StudentProjekt;
-import pl.edu.pbs.ipodloga.Model.StudentZadanie;
-import pl.edu.pbs.ipodloga.Model.Zadanie;
+import pl.edu.pbs.ipodloga.Model.*;
+import pl.edu.pbs.ipodloga.Service.ProjectService;
 import pl.edu.pbs.ipodloga.Service.StudentProjektService;
 import pl.edu.pbs.ipodloga.Service.StudentService;
 import pl.edu.pbs.ipodloga.Service.StudentZadanieService;
@@ -52,6 +50,21 @@ public class StudentController {
             String id = studentService.dodajStudenta(student);
             return new ResponseEntity<>(id, HttpStatus.CREATED);
         } catch (InterruptedException | ExecutionException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> pobierzStudenta(@PathVariable("id") String id) {
+        try {
+            Student student = studentService.pobierzStudenta(id);
+            if (student != null) {
+                return new ResponseEntity<>(student, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -171,5 +184,28 @@ public class StudentController {
         } catch (InterruptedException | ExecutionException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/{studentId}/projects")
+    public List<Projekt> getProjectsForStudents(@PathVariable String studentId) throws Exception {
+        ApiFuture<QuerySnapshot> query = firestore.collection("studentProjekt").whereEqualTo("studentId", studentId).get();
+
+        QuerySnapshot querySnapshot = query.get();
+        List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+
+        List<Projekt> projects = new ArrayList<>();
+
+        for (QueryDocumentSnapshot document : documents) {
+            String projektId = document.getString("projektId");
+
+            DocumentSnapshot projectSnapshot = firestore.collection("projekt").document(projektId).get().get();
+
+            if (projectSnapshot.exists()) {
+                Projekt projekt = projectSnapshot.toObject(Projekt.class);
+                projects.add(projekt);
+            }
+        }
+
+        return projects;
     }
 }

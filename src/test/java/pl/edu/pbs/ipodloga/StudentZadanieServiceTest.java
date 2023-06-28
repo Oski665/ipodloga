@@ -19,31 +19,31 @@ import static org.mockito.Mockito.when;
 
 public class StudentZadanieServiceTest {
 
-//    @Test
-//    public void testPrzypiszZadanieDoStudenta() {
-//        Firestore firestore = Mockito.mock(Firestore.class);
-//        CollectionReference collectionReference = Mockito.mock(CollectionReference.class);
-//        ApiFuture<DocumentReference> future = Mockito.mock(ApiFuture.class);
-//        DocumentReference documentReference = Mockito.mock(DocumentReference.class);
-//
-//        when(firestore.collection(anyString())).thenReturn(collectionReference);
-//        when(collectionReference.add(any())).thenReturn(future);
-//        try {
-//            when(future.get()).thenReturn(documentReference);
-//            when(documentReference.getId()).thenReturn("test-id");
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//
-//        StudentZadanieService studentZadanieService = new StudentZadanieService(firestore);
-//        StudentZadanie studentZadanie = new StudentZadanie();
-//
-//        try {
-//            String id = studentZadanieService.przypiszZadanieDoStudenta(studentZadanie);
-//            assertEquals("test-id", id);
-//        } catch (Exception e) {
-//            e.printStackTrace();  // wydrukuje szczegóły wyjątku
-//            fail("Nie powinno rzucać wyjątku");
-//        }
-//    }
+    @Test
+    public void testPrzypiszZadanieDoStudenta() {
+        Firestore firestore = Mockito.mock(Firestore.class);
+        CollectionReference collectionReference = Mockito.mock(CollectionReference.class);
+        ApiFuture<DocumentReference> future = Mockito.mock(ApiFuture.class);
+        DocumentReference documentReference = Mockito.mock(DocumentReference.class);
+
+        when(firestore.collection(anyString())).thenReturn(collectionReference);
+        when(collectionReference.add(any())).thenReturn(future);
+        try {
+            when(future.get()).thenReturn(documentReference);
+            when(documentReference.getId()).thenReturn("test-id");
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        StudentZadanieService studentZadanieService = new StudentZadanieService(firestore);
+        StudentZadanie studentZadanie = new StudentZadanie();
+
+        try {
+            String id = studentZadanieService.przypiszZadanieDoStudenta(studentZadanie);
+            assertEquals("test-id", id);
+        } catch (Exception e) {
+            e.printStackTrace();  // wydrukuje szczegóły wyjątku
+            fail("Nie powinno rzucać wyjątku");
+        }
+    }
 }

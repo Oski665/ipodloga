@@ -41,10 +41,10 @@ public class Student {
     public void setStacjonarny(boolean stacjonarny) {
         this.stacjonarny = stacjonarny;
     }
-    public Long getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
-    public void setStudent_id(Long student_id) {
+    public void setStudent_id(String student_id) {
         this.student_id = student_id;
     }
     public String getNazwisko() {
@@ -74,7 +74,7 @@ public class Student {
     private String nazwisko;
     private String nr_indeksu;
     private boolean stacjonarny;
-    private Long student_id;
+    private String student_id;
     private List<String> projektyId;
     private List<String> zadaniaId;
     public Student(){
