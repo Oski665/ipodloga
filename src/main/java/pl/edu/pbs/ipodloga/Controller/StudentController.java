@@ -54,10 +54,10 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/{studentId}/zadania")
-    public List<Pair<Student, Zadanie>> pobierzZadaniaStudenta(@PathVariable String studentId) {
-        return studentZadanieService.pobierzZadaniaStudenta(studentId);
-    }
+//    @GetMapping("/{studentId}/zadania")
+//    public List<Pair<Student, Zadanie>> pobierzZadaniaStudenta(@PathVariable String studentId) {
+//        return studentZadanieService.pobierzZadaniaStudenta(studentId);
+//    }
 
     @PostMapping("/{studentId}/projekty/{projektId}")
     public ResponseEntity<String> przypiszProjekt(@PathVariable String studentId, @PathVariable String projektId) {

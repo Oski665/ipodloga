@@ -70,6 +70,9 @@ public class ZadanieService {
             existingZadanie.setStatus(updatedZadanie.getStatus());
             existingZadanie.setProjektId(updatedZadanie.getProjektId());
             existingZadanie.setDeadline(updatedZadanie.getDeadline());
+            if (updatedZadanie.getStudentId() != null) {
+                existingZadanie.setStudentId(updatedZadanie.getStudentId());
+            }
             ApiFuture<WriteResult> writeResult = documentReference.set(existingZadanie);
             logger.info("Zaktualizowano zadanie o ID: {} o czasie: {}", id, writeResult.get().getUpdateTime());
 
