@@ -119,4 +119,22 @@ public class ZadanieService {
         }
     }
 
+    public List<Zadanie> getTasksForStudent(String studentId) {
+        List<Zadanie> zadania = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("studentZadanie").whereEqualTo("studentId", studentId).get().get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                String zadanieId = document.getString("zadanieId");
+                DocumentSnapshot zadanieDocument = firestore.collection("zadanie").document(zadanieId).get().get();
+                if (zadanieDocument.exists()) {
+                    Zadanie zadanie = zadanieDocument.toObject(Zadanie.class);
+                    zadania.add(zadanie);
+                    logger.info("Dodano zadanie: {} dla studenta: {}", zadanie.getNazwa(), studentId);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać zadań", e);
+        }
+        return zadania;
+    }
 }

@@ -209,4 +209,17 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{studentId}/zadania")
+    public List<Zadanie> getStudentTasks(@PathVariable String studentId) {
+        return studentService.getTasksForStudent(studentId);
+    }
+
+    @GetMapping("/{studentId}/projekty")
+    public ResponseEntity<List<Projekt>> pobierzProjektyStudenta(@PathVariable String studentId) {
+        List<Projekt> projekty = studentService.getProjectsForStudent(studentId);
+        if (projekty.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(projekty, HttpStatus.OK);
+    }
 }

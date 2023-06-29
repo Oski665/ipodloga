@@ -4,12 +4,14 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,6 +20,11 @@ public class StudentService {
 
     private final Firestore firestore;
     private final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
+    @Autowired
+    private ZadanieService zadanieService;
+    @Autowired
+    private ProjectService projectService;
 
     public StudentService(Firestore firestore) {
         this.firestore = firestore;
@@ -108,4 +115,27 @@ public class StudentService {
         }
     }
 
+    public List<Zadanie> getTasksForStudent(String studentId) {
+        return zadanieService.getTasksForStudent(studentId);
+    }
+
+    public List<Projekt> getProjectsForStudent(String studentId) {
+        Student student = getStudentById(studentId);
+        if (student == null) {
+            logger.error("Nie znaleziono studenta o id: {}", studentId);
+            return Collections.emptyList();
+        }
+
+        List<String> projectIds = student.getProjektyId();
+        List<Projekt> projekty = new ArrayList<>();
+        for (String projectId : projectIds) {
+            Projekt projekt = projectService.pobierzProjekt(projectId);
+            if (projekt != null) {
+                projekty.add(projekt);
+            } else {
+                logger.warn("Nie znaleziono projektu o id: {} dla studenta o id: {}", projectId, studentId);
+            }
+        }
+        return projekty;
+    }
 }
