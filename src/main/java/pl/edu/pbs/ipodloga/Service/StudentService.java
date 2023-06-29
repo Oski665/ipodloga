@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -126,14 +127,20 @@ public class StudentService {
             List<QueryDocumentSnapshot> studentProjektDocuments =
                     firestore.collection("studentProjekt").whereEqualTo("studentId", studentId).get().get().getDocuments();
 
+            logger.info("Znaleziono {} dokumentów 'studentProjekt' dla studenta o id: {}", studentProjektDocuments.size(), studentId);
+
             // Dla każdego dokumentu "studentProjekt" znajdź odpowiadający mu dokument "projekt"
             for (QueryDocumentSnapshot studentProjektDocument : studentProjektDocuments) {
                 String projektId = studentProjektDocument.getString("projektId");
-                DocumentSnapshot projektDocument = firestore.collection("projekty").document(projektId).get().get();
+                logger.info("Znaleziono 'projektId': {} dla dokumentu 'studentProjekt'", projektId);
+
+                DocumentSnapshot projektDocument = firestore.collection("projekt").document(projektId).get().get();
                 if (projektDocument.exists()) {
                     Projekt projekt = projektDocument.toObject(Projekt.class);
                     projekty.add(projekt);
                     logger.info("Dodano projekt: {} dla studenta: {}", projekt.getNazwa(), studentId);
+                } else {
+                    logger.warn("Dokument 'projekt' o id: {} nie istnieje", projektId);
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
