@@ -120,22 +120,26 @@ public class StudentService {
     }
 
     public List<Projekt> getProjectsForStudent(String studentId) {
-        Student student = getStudentById(studentId);
-        if (student == null) {
-            logger.error("Nie znaleziono studenta o id: {}", studentId);
-            return Collections.emptyList();
-        }
-
-        List<String> projectIds = student.getProjektyId();
         List<Projekt> projekty = new ArrayList<>();
-        for (String projectId : projectIds) {
-            Projekt projekt = projectService.pobierzProjekt(projectId);
-            if (projekt != null) {
-                projekty.add(projekt);
-            } else {
-                logger.warn("Nie znaleziono projektu o id: {} dla studenta o id: {}", projectId, studentId);
+        try {
+            // Znajdź wszystkie dokumenty "studentProjekt" dla danego studenta
+            List<QueryDocumentSnapshot> studentProjektDocuments =
+                    firestore.collection("studentProjekt").whereEqualTo("studentId", studentId).get().get().getDocuments();
+
+            // Dla każdego dokumentu "studentProjekt" znajdź odpowiadający mu dokument "projekt"
+            for (QueryDocumentSnapshot studentProjektDocument : studentProjektDocuments) {
+                String projektId = studentProjektDocument.getString("projektId");
+                DocumentSnapshot projektDocument = firestore.collection("projekty").document(projektId).get().get();
+                if (projektDocument.exists()) {
+                    Projekt projekt = projektDocument.toObject(Projekt.class);
+                    projekty.add(projekt);
+                    logger.info("Dodano projekt: {} dla studenta: {}", projekt.getNazwa(), studentId);
+                }
             }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać projektów", e);
         }
         return projekty;
     }
+
 }
