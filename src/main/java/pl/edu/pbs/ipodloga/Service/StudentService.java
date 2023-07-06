@@ -4,20 +4,28 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.ipodloga.Model.Projekt;
 import pl.edu.pbs.ipodloga.Model.Student;
 import pl.edu.pbs.ipodloga.Model.Zadanie;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
     private final Firestore firestore;
     private final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
+    @Autowired
+    private ZadanieService zadanieService;
+    @Autowired
+    private ProjectService projectService;
 
     public StudentService(Firestore firestore) {
         this.firestore = firestore;
@@ -106,6 +114,39 @@ public class StudentService {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Nie udało się pobrać studenta", e);
         }
+    }
+
+    public List<Zadanie> getTasksForStudent(String studentId) {
+        return zadanieService.getTasksForStudent(studentId);
+    }
+
+    public List<Projekt> getProjectsForStudent(String studentId) {
+        List<Projekt> projekty = new ArrayList<>();
+        try {
+            // Znajdź wszystkie dokumenty "studentProjekt" dla danego studenta
+            List<QueryDocumentSnapshot> studentProjektDocuments =
+                    firestore.collection("studentProjekt").whereEqualTo("studentId", studentId).get().get().getDocuments();
+
+            logger.info("Znaleziono {} dokumentów 'studentProjekt' dla studenta o id: {}", studentProjektDocuments.size(), studentId);
+
+            // Dla każdego dokumentu "studentProjekt" znajdź odpowiadający mu dokument "projekt"
+            for (QueryDocumentSnapshot studentProjektDocument : studentProjektDocuments) {
+                String projektId = studentProjektDocument.getString("projektId");
+                logger.info("Znaleziono 'projektId': {} dla dokumentu 'studentProjekt'", projektId);
+
+                DocumentSnapshot projektDocument = firestore.collection("projekt").document(projektId).get().get();
+                if (projektDocument.exists()) {
+                    Projekt projekt = projektDocument.toObject(Projekt.class);
+                    projekty.add(projekt);
+                    logger.info("Dodano projekt: {} dla studenta: {}", projekt.getNazwa(), studentId);
+                } else {
+                    logger.warn("Dokument 'projekt' o id: {} nie istnieje", projektId);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać projektów", e);
+        }
+        return projekty;
     }
 
 }

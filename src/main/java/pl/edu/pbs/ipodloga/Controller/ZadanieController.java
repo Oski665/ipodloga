@@ -146,5 +146,4 @@ public class ZadanieController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 }

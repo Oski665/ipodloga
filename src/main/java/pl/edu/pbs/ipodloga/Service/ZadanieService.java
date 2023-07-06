@@ -70,6 +70,9 @@ public class ZadanieService {
             existingZadanie.setStatus(updatedZadanie.getStatus());
             existingZadanie.setProjektId(updatedZadanie.getProjektId());
             existingZadanie.setDeadline(updatedZadanie.getDeadline());
+            if (updatedZadanie.getStudentId() != null) {
+                existingZadanie.setStudentId(updatedZadanie.getStudentId());
+            }
             ApiFuture<WriteResult> writeResult = documentReference.set(existingZadanie);
             logger.info("Zaktualizowano zadanie o ID: {} o czasie: {}", id, writeResult.get().getUpdateTime());
 
@@ -117,6 +120,23 @@ public class ZadanieService {
         } else {
             throw new NoSuchElementException("Zadanie o ID: " + id + " nie istnieje");
         }
+    }
+
+    public List<Zadanie> getTasksForStudent(String studentId) {
+        List<Zadanie> zadania = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = firestore.collection("zadanie").whereEqualTo("studentId", studentId).get().get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                Zadanie zadanie = document.toObject(Zadanie.class);
+                if (zadanie != null) {
+                    zadania.add(zadanie);
+                    logger.info("Dodano zadanie: {} dla studenta: {}", zadanie.getNazwa(), studentId);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Nie udało się pobrać zadań", e);
+        }
+        return zadania;
     }
 
 }
